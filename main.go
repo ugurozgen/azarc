@@ -2,14 +2,18 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"time"
 )
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
+	programOptions := parseFlags()
+
+	ctx, cancel := context.WithTimeout(context.Background(), programOptions.MaxRuntime)
 	defer cancel()
 
 	go listenShutdown(cancel)
@@ -31,4 +35,16 @@ func listenShutdown(cancel func()) {
 	signal.Notify(c, os.Interrupt)
 	<-c
 	cancel()
+}
+
+func parseFlags() *ProgramOption {
+	primaryTitleFlag := flag.String("primaryTitle", "foo", "Primary Title filter that will be applied to data.")
+	maxRunTimeFlag := flag.Duration("maxRunTime", time.Second*10, "Timeout for the operation. Default value is 10 seconds")
+
+	flag.Parse()
+
+	return &ProgramOption{
+		PrimaryTitleFlag: *primaryTitleFlag,
+		MaxRuntime:       *maxRunTimeFlag,
+	}
 }

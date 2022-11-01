@@ -1,5 +1,7 @@
 package main
 
+import "time"
+
 type OmdbTitleRecord struct {
 	Tconst         string
 	TitleType      string
@@ -10,4 +12,9 @@ type OmdbTitleRecord struct {
 	EndYear        string
 	RuntimeMinutes string
 	Genres         string
+}
+
+type ProgramOption struct {
+	PrimaryTitleFlag string
+	MaxRuntime       time.Duration
 }
