@@ -7,9 +7,13 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+
+	"github.com/pkg/profile"
 )
 
 func main() {
+	defer profile.Start(profile.ProfilePath(".")).Stop()
+
 	programOptions := ParseFlags()
 
 	ctx, cancel := context.WithTimeout(context.Background(), programOptions.maxRunTimeFlag)
