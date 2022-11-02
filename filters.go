@@ -8,20 +8,34 @@ import (
 type FilterFunc func(po ProgramOptions) bool
 
 func (otr OmdbTitleRecord) applyFilters(po ProgramOptions) bool {
-	filters := []FilterFunc{
-		otr.primaryTitleFilter,
-		otr.originalTitleFilter,
-		otr.genreFilter,
-		otr.startYearFilter,
-		otr.endYearFilter,
-		otr.runtimeMinutesFilter,
-		otr.genresFilter,
+	filters := []FilterFunc{}
+	if isFlagPassed("primaryTitle") {
+		filters = append(filters, otr.primaryTitleFilter)
+	}
+	if isFlagPassed("originalTitle") {
+		filters = append(filters, otr.originalTitleFilter)
+	}
+	if isFlagPassed("genre") {
+		filters = append(filters, otr.genreFilter)
+	}
+	if isFlagPassed("startYear") {
+		filters = append(filters, otr.startYearFilter)
+	}
+	if isFlagPassed("endYear") {
+		filters = append(filters, otr.endYearFilter)
+	}
+	if isFlagPassed("runtimeMinutes") {
+		filters = append(filters, otr.runtimeMinutesFilter)
+	}
+	if isFlagPassed("genres") {
+		filters = append(filters, otr.genresFilter)
 	}
 
 	valid := true
 	for _, filter := range filters {
 		if !filter(po) {
 			valid = false
+			break
 		}
 	}
 
@@ -29,38 +43,31 @@ func (otr OmdbTitleRecord) applyFilters(po ProgramOptions) bool {
 }
 
 func (otr OmdbTitleRecord) primaryTitleFilter(po ProgramOptions) bool {
-	return !isFlagPassed("primaryTitle") ||
-		(po.primaryTitleFlag != "" && strings.Contains(strings.ToLower(otr.PrimaryTitle), po.primaryTitleFlag))
+	return strings.Contains(strings.ToLower(otr.PrimaryTitle), strings.ToLower(po.primaryTitleFlag))
 }
 
 func (otr OmdbTitleRecord) originalTitleFilter(po ProgramOptions) bool {
-	return !isFlagPassed("originalTitle") ||
-		(po.originalTitleFlag != "" && strings.Contains(strings.ToLower(otr.OriginalTitle), po.originalTitleFlag))
+	return strings.Contains(strings.ToLower(otr.OriginalTitle), strings.ToLower(po.originalTitleFlag))
 }
 
 func (otr OmdbTitleRecord) genreFilter(po ProgramOptions) bool {
-	return !isFlagPassed("genre") ||
-		(po.genreFlag != "" && strings.Contains(strings.ToLower(otr.Genres), po.genreFlag))
+	return strings.Contains(strings.ToLower(otr.Genres), strings.ToLower(po.genreFlag))
 }
 
 func (otr OmdbTitleRecord) startYearFilter(po ProgramOptions) bool {
-	return !isFlagPassed("startYear") ||
-		(po.startYearFlag != "" && strings.Contains(strings.ToLower(otr.StartYear), po.startYearFlag))
+	return strings.Contains(strings.ToLower(otr.StartYear), strings.ToLower(po.startYearFlag))
 }
 
 func (otr OmdbTitleRecord) endYearFilter(po ProgramOptions) bool {
-	return !isFlagPassed("endYear") ||
-		(po.endYearFlag != "" && strings.Contains(strings.ToLower(otr.EndYear), po.endYearFlag))
+	return strings.Contains(strings.ToLower(otr.EndYear), strings.ToLower(po.endYearFlag))
 }
 
 func (otr OmdbTitleRecord) runtimeMinutesFilter(po ProgramOptions) bool {
-	return !isFlagPassed("runtimeMinutes") ||
-		(po.runtimeMinutesFlag != "" && strings.Contains(strings.ToLower(otr.RuntimeMinutes), po.runtimeMinutesFlag))
+	return strings.Contains(strings.ToLower(otr.RuntimeMinutes), strings.ToLower(po.runtimeMinutesFlag))
 }
 
 func (otr OmdbTitleRecord) genresFilter(po ProgramOptions) bool {
-	return !isFlagPassed("genres") ||
-		(po.genresFlag != "" && strings.Contains(strings.ToLower(otr.Genres), po.genresFlag))
+	return strings.Contains(strings.ToLower(otr.Genres), strings.ToLower(po.genresFlag))
 }
 
 func isFlagPassed(name string) bool {

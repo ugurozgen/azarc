@@ -9,20 +9,11 @@ import (
 	"sync"
 )
 
-type TsvReader interface {
-	ReadAsync() error
-}
-
-type OmdbTsvReader struct {
-	goroutineCount int
-	fileName       string
-	ctx            context.Context
-	cancel         context.CancelFunc
-	outputCh       chan OmdbTitleRecord
-	wg             sync.WaitGroup
-	recordCh       chan []string
-}
-
+/*
+NewOmdbTsvReader creates OmdbTsvReader with default values.
+If you provide any option it will apply options and override
+default values.
+*/
 func NewOmdbTsvReader(opts ...TsvReaderOption) *OmdbTsvReader {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -100,14 +91,14 @@ func (otr *OmdbTsvReader) wait() {
 	}()
 }
 
-func (otr *OmdbTsvReader) parserRoutine(recordCh <-chan []string, titleCh chan<- OmdbTitleRecord) {
+func (otr *OmdbTsvReader) parserRoutine(recordCh <-chan []string, outputCh chan<- OmdbTitleRecord) {
 	for {
 		select {
 		case record, ok := <-recordCh:
 			if !ok {
 				return
 			}
-			titleCh <- parseRecord(record)
+			outputCh <- parseRecord(record)
 
 		case <-otr.ctx.Done():
 			return

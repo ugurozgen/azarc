@@ -12,7 +12,7 @@
             "program": "${fileDirname}",
             "args": [
                 "-maxRunTime=10s",
-                "-primaryTitle=xyz"
+                "-primaryTitle=Blacksmith"
             ]
         }
     ]

@@ -1,6 +1,24 @@
 package main
 
-import "time"
+import (
+	"context"
+	"sync"
+	"time"
+)
+
+type TsvReader interface {
+	ReadAsync() error
+}
+
+type OmdbTsvReader struct {
+	goroutineCount int
+	fileName       string
+	ctx            context.Context
+	cancel         context.CancelFunc
+	outputCh       chan OmdbTitleRecord
+	wg             sync.WaitGroup
+	recordCh       chan []string
+}
 
 type OmdbTitleRecord struct {
 	Tconst         string

@@ -6,7 +6,7 @@ import (
 )
 
 func ParseFlags() ProgramOptions {
-	filePathFlag := flag.String("filePath", "title.basics.tsv", "Absolute path to the inflated `title.basics.tsv.gz` file")
+	filePathFlag := flag.String("filePath", "title.basics_test.tsv", "Absolute path to the inflated `title.basics.tsv.gz` file")
 	titleTypeFlag := flag.String("titleType", "", "Filter on `titleType` column")
 	primaryTitleFlag := flag.String("primaryTitle", "", "Filter on `primaryTitle` column")
 	originalTitleFlag := flag.String("originalTitle", "", "Filter on `originalTitle` column")
