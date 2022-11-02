@@ -11,7 +11,8 @@
             "mode": "auto",
             "program": "${fileDirname}",
             "args": [
-                "-maxRunTime=5ms"
+                "-maxRunTime=10s",
+                "-primaryTitle=xyz"
             ]
         }
     ]

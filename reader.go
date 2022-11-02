@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/csv"
 	"io"
-	"log"
 	"os"
 	"runtime"
 	"sync"
@@ -73,9 +72,10 @@ func (otr *OmdbTsvReader) read(reader *csv.Reader) {
 			if err == io.EOF {
 				break
 			}
+
+			// ignore broken lines
 			if err != nil {
-				log.Println(err)
-				break
+				continue
 			}
 			otr.recordCh <- record
 		}
