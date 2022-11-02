@@ -30,7 +30,7 @@ go test -v -coverprofile ./...
 go test -benchmem -bench=.
 ```
 
-## How to run 
+## How to run cli
 ```bash
 OMDB_API_KEY="b020b1bb" go run . -filePath ./title.basics_test.tsv -maxRunTime 10s -primaryTitle car 
 ```
