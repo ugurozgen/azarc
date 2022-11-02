@@ -9,11 +9,9 @@ import (
 	"sync"
 )
 
-/*
-NewOmdbTsvReader creates OmdbTsvReader with default values.
-If you provide any option it will apply options and override
-default values.
-*/
+// NewOmdbTsvReader creates OmdbTsvReader with default values.
+// If you provide any option it will apply options and override
+// default values.
 func NewOmdbTsvReader(opts ...TsvReaderOption) *OmdbTsvReader {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -41,6 +39,7 @@ func NewOmdbTsvReader(opts ...TsvReaderOption) *OmdbTsvReader {
 	return otr
 }
 
+// ReadAsync reads and parses each line of tsv file concurrently
 func (otr *OmdbTsvReader) ReadAsync() (chan OmdbTitleRecord, error) {
 	reader, err := otr.reader()
 	if err != nil {
@@ -56,6 +55,7 @@ func (otr *OmdbTsvReader) ReadAsync() (chan OmdbTitleRecord, error) {
 	return otr.outputCh, nil
 }
 
+// read reads tsv file and puts record to recordCh
 func (otr *OmdbTsvReader) read(reader *csv.Reader) {
 	go func() {
 		for {
@@ -74,6 +74,8 @@ func (otr *OmdbTsvReader) read(reader *csv.Reader) {
 	}()
 }
 
+// startParsers runs parser goroutines to consume tsv records and map them to OmdbTitleRecord
+// startParsers method works with goroutineCount
 func (otr *OmdbTsvReader) startParsers() {
 	for w := 0; w < otr.goroutineCount; w++ {
 		otr.wg.Add(1)
@@ -84,6 +86,7 @@ func (otr *OmdbTsvReader) startParsers() {
 	}
 }
 
+// wait waits for all tsv records get done
 func (otr *OmdbTsvReader) wait() {
 	go func() {
 		otr.wg.Wait()
@@ -91,6 +94,8 @@ func (otr *OmdbTsvReader) wait() {
 	}()
 }
 
+// parserRoutine reads records from recordCh
+// after parsing the record, puts OmdbTitleRecord to outputCh
 func (otr *OmdbTsvReader) parserRoutine(recordCh <-chan []string, outputCh chan<- OmdbTitleRecord) {
 	for {
 		select {
@@ -106,6 +111,7 @@ func (otr *OmdbTsvReader) parserRoutine(recordCh <-chan []string, outputCh chan<
 	}
 }
 
+// parseRecord maps a tsv record to OmdbTitleRecord
 func parseRecord(record []string) OmdbTitleRecord {
 	return OmdbTitleRecord{
 		Tconst:         record[0],
@@ -120,6 +126,7 @@ func parseRecord(record []string) OmdbTitleRecord {
 	}
 }
 
+// reader generates tsv reader
 func (otr *OmdbTsvReader) reader() (*csv.Reader, error) {
 	file, err := os.Open(otr.fileName)
 	if err != nil {
@@ -132,26 +139,31 @@ func (otr *OmdbTsvReader) reader() (*csv.Reader, error) {
 	return csvReader, nil
 }
 
+// TsvReaderOption is a variadic function that is being used to apply options to TsvReader
 type TsvReaderOption func(*OmdbTsvReader)
 
+// WithGoroutineCount is a TsvReaderOption and enables setting goroutineCount for TsvReader
 func WithGoroutineCount(goroutineCount int) TsvReaderOption {
 	return func(otr *OmdbTsvReader) {
 		otr.goroutineCount = goroutineCount
 	}
 }
 
+// Filename is a TsvReaderOption and enables setting file name for TsvReader
 func Filename(name string) TsvReaderOption {
 	return func(otr *OmdbTsvReader) {
 		otr.fileName = name
 	}
 }
 
+// WithContext is a TsvReaderOption and enables setting context for TsvReader
 func WithContext(ctx context.Context) TsvReaderOption {
 	return func(otr *OmdbTsvReader) {
 		otr.ctx = ctx
 	}
 }
 
+// WithCancel is a TsvReaderOption and enables setting cancel function for TsvReader
 func WithCancel(cancel context.CancelFunc) TsvReaderOption {
 	return func(otr *OmdbTsvReader) {
 		otr.cancel = cancel

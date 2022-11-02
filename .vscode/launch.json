@@ -12,7 +12,8 @@
             "program": "${fileDirname}",
             "args": [
                 "-maxRunTime=10s",
-                "-primaryTitle=Blacksmith"
+                "-primaryTitle=car",
+                "-originalTitle=men"
             ]
         }
     ]

@@ -26,9 +26,15 @@ func main() {
 
 	fmt.Println("IMDB_ID | Title | Plot")
 
+	filters := parseFilters(programOptions)
+	if len(filters) == 0 {
+		log.Println("Please provide any filter")
+		return
+	}
+
 	var wg sync.WaitGroup
 	for omdbTitleRecord := range outputCh {
-		if !omdbTitleRecord.applyFilters(programOptions) {
+		if !omdbTitleRecord.applyFilters(filters, programOptions) {
 			continue
 		}
 

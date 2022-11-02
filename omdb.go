@@ -6,15 +6,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 const (
 	OmdbApiUrl = "http://www.omdbapi.com"
-	OmdbApiKey = "b020b1bb"
 )
 
+// SearchForPlot fetches omdb record with title id
 func SearchForPlot(otr OmdbTitleRecord, ctx context.Context) (*OmdbRecord, error) {
-	requestURL := fmt.Sprintf("%s?i=%s&apikey=%s", OmdbApiUrl, otr.Tconst, OmdbApiKey)
+	requestURL := fmt.Sprintf("%s?i=%s&apikey=%s", OmdbApiUrl, otr.Tconst, os.Getenv("OMDB_API_KEY"))
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		return nil, err
