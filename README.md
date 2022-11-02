@@ -34,6 +34,12 @@ go test -benchmem -bench=.
 ```bash
 OMDB_API_KEY="b020b1bb" go run . -filePath ./title.basics_test.tsv -maxRunTime 10s -primaryTitle car 
 ```
+
+## How to profile
+```bash
+go test -cpuprofile cpu.prof -memprofile mem.prof -bench .
+go tool pprof -http :8080 cpu.prof
+```
 ## Docker build
 ```bash
 docker build -t azarc:$version .
